@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Lanka Wings - Flight Analytics & Commercial Decision Support System. Real-time airline revenue intelligence, route performance, and strategic demand forecasting.">
+  <title>Lanka Wings | Flight Analytics &amp; Decision Support</title>
+  
+  <!-- Favicon (SVG plane icon) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4af37'><path d='M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z'/></svg>">
+  
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar (Sticky) -->
+  <header class="navbar" id="mainNavbar">
+    <div class="navbar-container">
+      <!-- Brand Logo -->
+      <a href="#hero" class="brand-logo" aria-label="Lanka Wings Home">
+        <div class="logo-icon-wrap">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">LANKA <span class="gold-text">WINGS</span></span>
+          <span class="logo-subtitle">INTELLIGENCE SUITE</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="nav-links" aria-label="Primary Navigation">
+        <a href="#home" class="nav-link">Home</a>
+        <a href="#book" class="nav-link">Book</a>
+        <a href="#manage" class="nav-link">Manage Booking</a>
+        <a href="#destinations" class="nav-link">Destinations</a>
+        <a href="#offers" class="nav-link">Offers</a>
+        <a href="#analytics" class="nav-link active" aria-current="page">
+          <span>Analytics</span>
+          <span class="active-dot"></span>
+        </a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+
+      <!-- Right Utility Actions -->
+      <div class="nav-actions">
+        <!-- Language Selector -->
+        <div class="lang-selector-wrap" id="langSelector">
+          <button type="button" class="lang-btn active" data-lang="EN" title="English">EN</button>
+          <span class="lang-divider">|</span>
+          <button type="button" class="lang-btn" data-lang="SI" title="සිංහල">සිං</button>
+          <span class="lang-divider">|</span>
+          <button type="button" class="lang-btn" data-lang="TA" title="தமிழ்">த</button>
+        </div>
+
+        <!-- Theme Toggle (Light / Dark) -->
+        <button type="button" class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark/light theme" title="Toggle theme">
+          <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+          </svg>
+          <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+        </button>
+
+        <!-- Login / Executive Portal -->
+        <a href="#login" class="btn btn-outline-gold nav-login-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Staff Portal</span>
+        </a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button type="button" class="mobile-toggle-btn" id="mobileMenuToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobileDrawer">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Navigation -->
+  <div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+    <div class="mobile-drawer-header">
+      <div class="logo-text">
+        <span class="logo-title">LANKA <span class="gold-text">WINGS</span></span>
+      </div>
+      <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close navigation menu">
+        &times;
+      </button>
+    </div>
+    <nav class="mobile-nav-links">
+      <a href="#home" class="mobile-nav-link">Home</a>
+      <a href="#book" class="mobile-nav-link">Book Flights</a>
+      <a href="#manage" class="mobile-nav-link">Manage Booking</a>
+      <a href="#destinations" class="mobile-nav-link">Destinations</a>
+      <a href="#offers" class="mobile-nav-link">Special Offers</a>
+      <a href="#analytics" class="mobile-nav-link active">Flight Analytics</a>
+      <a href="#contact" class="mobile-nav-link">Executive Contact</a>
+    </nav>
+    <div class="mobile-drawer-footer">
+      <div class="mobile-lang-selector">
+        <span class="mobile-lang-label">Language:</span>
+        <div class="lang-pills">
+          <button class="lang-pill active" data-lang="EN">English</button>
+          <button class="lang-pill" data-lang="SI">සිංහල</button>
+          <button class="lang-pill" data-lang="TA">தமிழ்</button>
+        </div>
+      </div>
+      <a href="#login" class="btn btn-gold btn-block">Sign in to Executive Portal</a>
+    </div>
+  </div>
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <!-- Hero Banner -->
+  <section class="hero-banner" id="hero">
+    <div class="hero-bg-container">
+      <img 
+        src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1920&q=80" 
+        alt="Commercial aircraft wing soaring over clouds and tropical coastline at sunrise" 
+        class="hero-bg-image" 
+        loading="lazy" 
+        onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'1920\' height=\'600\' viewBox=\'0 0 1920 600\'><defs><linearGradient id=\'grad\' x1=\'0%\' y1=\'0%\' x2=\'100%\' y2=\'100%\'><stop offset=\'0%\' style=\'stop-color:%23071324;stop-opacity:1\' /><stop offset=\'100%\' style=\'stop-color:%230f2b4c;stop-opacity:1\' /></linearGradient></defs><rect width=\'100%\' height=\'100%\' fill=\'url(%23grad)\'/></svg>'; this.classList.add('img-fallback');"
+      >
+      <div class="hero-gradient-overlay"></div>
+    </div>
+    
+    <div class="hero-content-wrap">
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-nav" aria-label="Breadcrumbs">
+        <ol class="breadcrumb-list">
+          <li class="breadcrumb-item"><a href="#home">Home</a></li>
+          <li class="breadcrumb-separator">/</li>
+          <li class="breadcrumb-item"><a href="#commercial">Commercial Operations</a></li>
+          <li class="breadcrumb-separator">/</li>
+          <li class="breadcrumb-item active" aria-current="page">Analytics &amp; Decision Support</li>
+        </ol>
+      </nav>
+
+      <div class="hero-badge">
+        <span class="live-pulse"></span>
+        <span>EXECUTIVE DECISION SUPPORT ENGINE</span>
+      </div>
+
+      <h1 class="hero-title">Flight Analytics &amp; Decision Support</h1>
+      <p class="hero-subtitle">
+        Commercial yield telemetry, route profitability matrices, and automated decision recommendations for Lanka Wings flight network.
+      </p>
+
+      <!-- Live Quick Status Bar -->
+      <div class="hero-metrics-strip">
+        <div class="hero-pill">
+          <span class="hero-pill-label">Network Hub:</span>
+          <span class="hero-pill-value">Bandaranaike Intl (CMB)</span>
+        </div>
+        <div class="hero-pill">
+          <span class="hero-pill-label">Active Routes:</span>
+          <span class="hero-pill-value">5 Key Corridors</span>
+        </div>
+        <div class="hero-pill">
+          <span class="hero-pill-label">Telemetry Feed:</span>
+          <span class="hero-pill-value text-emerald">Live &amp; Operational</span>
+        </div>
+        <div class="hero-pill">
+          <span class="hero-pill-label">Sync Period:</span>
+          <span class="hero-pill-value" id="heroSyncPeriod">12-Month Rolling</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Dashboard Content -->
+  <main class="dashboard-container" id="analyticsDashboard">
+
+    <!-- Top Destinations Insight Strip -->
+    <section class="destinations-strip-section" aria-labelledby="topDestinationsTitle">
+      <div class="section-header-compact">
+        <div>
+          <h2 id="topDestinationsTitle" class="section-title-sm">
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            Top Strategic Routes &amp; Destination Yield
+          </h2>
+          <p class="section-subtitle-sm">Key passenger traffic corridors from Colombo (CMB) with live booking telemetry.</p>
+        </div>
+        <span class="badge badge-gold">5 Core Gateways</span>
+      </div>
+
+      <!-- Destination Cards Carousel/Grid -->
+      <div class="destinations-grid" id="destinationsStripGrid">
+        <!-- Rendered dynamically by script.js -->
+        <div class="destination-card-skeleton shimmer"></div>
+        <div class="destination-card-skeleton shimmer"></div>
+        <div class="destination-card-skeleton shimmer"></div>
+        <div class="destination-card-skeleton shimmer"></div>
+        <div class="destination-card-skeleton shimmer"></div>
+      </div>
+    </section>
+
+    <!-- Filters & Controls Bar -->
+    <section class="filters-card" aria-label="Dashboard Filters">
+      <div class="filters-card-header">
+        <div class="filters-title-group">
+          <svg class="filters-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+          <div>
+            <h3 class="filters-title">Interactive Filter Controls</h3>
+            <p class="filters-desc">Slice commercial metrics by corridor, carrier division, cabin class, status, and timeline.</p>
+          </div>
+        </div>
+
+        <!-- Reset Button -->
+        <button type="button" class="btn btn-secondary btn-sm" id="resetFiltersBtn" title="Reset all filters to default">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+            <path d="M21 3v5h-5"/>
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+            <path d="M3 21v-5h5"/>
+          </svg>
+          <span>Reset Filters</span>
+        </button>
+      </div>
+
+      <!-- Filters Grid -->
+      <div class="filters-grid">
+        <!-- Filter 1: Date Range Presets & Pickers -->
+        <div class="filter-group filter-group-span-2">
+          <label class="filter-label" for="startDateInput">Date Range Period</label>
+          <div class="date-presets-wrap">
+            <button type="button" class="preset-btn active" data-preset="all">All Year</button>
+            <button type="button" class="preset-btn" data-preset="30d">Last 30D</button>
+            <button type="button" class="preset-btn" data-preset="90d">Last 90D</button>
+            <button type="button" class="preset-btn" data-preset="ytd">YTD</button>
+          </div>
+          <div class="date-inputs-row">
+            <div class="date-input-wrap">
+              <span class="date-label-sub">From:</span>
+              <input type="date" id="startDateInput" class="form-control" aria-label="Start Date">
+            </div>
+            <div class="date-input-wrap">
+              <span class="date-label-sub">To:</span>
+              <input type="date" id="endDateInput" class="form-control" aria-label="End Date">
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter 2: Route -->
+        <div class="filter-group">
+          <label class="filter-label" for="routeSelect">Route Corridors</label>
+          <select id="routeSelect" class="form-control">
+            <option value="ALL">All Routes (5 Corridors)</option>
+            <option value="CMB-LHR">CMB ⇄ LHR (London Heathrow)</option>
+            <option value="CMB-DXB">CMB ⇄ DXB (Dubai)</option>
+            <option value="CMB-SIN">CMB ⇄ SIN (Singapore Changi)</option>
+            <option value="CMB-DEL">CMB ⇄ DEL (Delhi Indira Gandhi)</option>
+            <option value="CMB-MLE">CMB ⇄ MLE (Malé Velana)</option>
+          </select>
+        </div>
+
+        <!-- Filter 3: Airline / Fleet Division -->
+        <div class="filter-group">
+          <label class="filter-label" for="airlineSelect">Operating Carrier</label>
+          <select id="airlineSelect" class="form-control">
+            <option value="ALL">All Operating Carriers</option>
+            <option value="Lanka Wings Mainline">Lanka Wings Mainline</option>
+            <option value="Lanka Wings Express">Lanka Wings Express</option>
+            <option value="Ceylon Air Link">Ceylon Air Link (Partner)</option>
+          </select>
+        </div>
+
+        <!-- Filter 4: Cabin Class -->
+        <div class="filter-group">
+          <label class="filter-label" for="classSelect">Cabin Class</label>
+          <select id="classSelect" class="form-control">
+            <option value="ALL">All Classes</option>
+            <option value="Economy">Economy</option>
+            <option value="Premium Economy">Premium Economy</option>
+            <option value="Business">Business Class</option>
+            <option value="First Class">First Class</option>
+          </select>
+        </div>
+
+        <!-- Filter 5: Booking Status -->
+        <div class="filter-group">
+          <label class="filter-label" for="statusSelect">Booking Status</label>
+          <select id="statusSelect" class="form-control">
+            <option value="ALL">All Statuses</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Cancelled">Cancelled</option>
+            <option value="Pending">Pending Payment</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Filter Stats Status Bar -->
+      <div class="filter-status-bar">
+        <div class="filter-result-count">
+          Showing <span id="filteredCount" class="highlight-number">0</span> of <span id="totalCount">0</span> flight bookings
+        </div>
+        <div class="active-filter-tags" id="activeFilterTags">
+          <!-- Dynamic active filter pills -->
+        </div>
+      </div>
+    </section>
+
+    <!-- KPI Metric Cards Grid -->
+    <section class="kpi-grid" id="kpiSection" aria-label="Key Performance Indicators">
+      <!-- KPI 1: Total Revenue -->
+      <div class="kpi-card" id="kpiCardRevenue">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Revenue</span>
+          <div class="kpi-icon-wrap icon-gold">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-value-wrap">
+          <span class="kpi-value" id="kpiRevenueVal">$0</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-delta delta-positive" id="kpiRevenueDelta">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+            <span id="kpiRevenueDeltaText">+0.0%</span>
+          </span>
+          <span class="kpi-comparison">vs previous period</span>
+        </div>
+      </div>
+
+      <!-- KPI 2: Total Bookings -->
+      <div class="kpi-card" id="kpiCardBookings">
+        <div class="kpi-header">
+          <span class="kpi-title">Total Bookings</span>
+          <div class="kpi-icon-wrap icon-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-value-wrap">
+          <span class="kpi-value" id="kpiBookingsVal">0</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-delta delta-positive" id="kpiBookingsDelta">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+            <span id="kpiBookingsDeltaText">+0.0%</span>
+          </span>
+          <span class="kpi-comparison">passenger itineraries</span>
+        </div>
+      </div>
+
+      <!-- KPI 3: Average Fare -->
+      <div class="kpi-card" id="kpiCardAvgFare">
+        <div class="kpi-header">
+          <span class="kpi-title">Average Fare / PNR</span>
+          <div class="kpi-icon-wrap icon-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+              <line x1="7" y1="7" x2="7.01" y2="7"/>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-value-wrap">
+          <span class="kpi-value" id="kpiAvgFareVal">$0</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-delta delta-positive" id="kpiAvgFareDelta">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+            <span id="kpiAvgFareDeltaText">+0.0%</span>
+          </span>
+          <span class="kpi-comparison">mean ticket price</span>
+        </div>
+      </div>
+
+      <!-- KPI 4: Cancellation Rate -->
+      <div class="kpi-card" id="kpiCardCancellation">
+        <div class="kpi-header">
+          <span class="kpi-title">Cancellation Rate</span>
+          <div class="kpi-icon-wrap icon-rose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-value-wrap">
+          <span class="kpi-value" id="kpiCancelRateVal">0.0%</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-delta delta-neutral" id="kpiCancelDelta">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span id="kpiCancelDeltaText">0.0%</span>
+          </span>
+          <span class="kpi-comparison">target: &lt; 10.0%</span>
+        </div>
+      </div>
+
+      <!-- KPI 5: Load Factor -->
+      <div class="kpi-card" id="kpiCardLoadFactor">
+        <div class="kpi-header">
+          <span class="kpi-title">Fleet Load Factor</span>
+          <div class="kpi-icon-wrap icon-emerald">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+          </div>
+        </div>
+        <div class="kpi-value-wrap">
+          <span class="kpi-value" id="kpiLoadFactorVal">0.0%</span>
+        </div>
+        <div class="kpi-footer">
+          <span class="kpi-delta delta-positive" id="kpiLoadFactorDelta">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+            <span id="kpiLoadFactorDeltaText">+0.0%</span>
+          </span>
+          <span class="kpi-comparison">seat occupancy ratio</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Decision Support & Executive Intelligence Panel -->
+    <section class="decision-support-panel" aria-labelledby="decisionPanelTitle">
+      <div class="decision-panel-header">
+        <div class="decision-header-main">
+          <div class="decision-badge">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+            </svg>
+            <span>INTELLIGENCE &amp; DECISION ENGINE</span>
+          </div>
+          <h2 id="decisionPanelTitle" class="decision-title">Commercial Diagnostics &amp; Strategic Actions</h2>
+          <p class="decision-subtitle">Algorithmic synthesis of network booking velocity, yield bottlenecks, and revenue optimization directives.</p>
+        </div>
+        <div class="decision-meta">
+          <span class="decision-pulse"></span>
+          <span>Engine Status: Active Heuristics</span>
+        </div>
+      </div>
+
+      <!-- Auto-Generated Insight Cards (4 metrics) -->
+      <div class="insights-cards-grid" id="insightsCardsGrid">
+        <!-- Rendered dynamically by script.js -->
+        <div class="insight-card shimmer"></div>
+        <div class="insight-card shimmer"></div>
+        <div class="insight-card shimmer"></div>
+        <div class="insight-card shimmer"></div>
+      </div>
+
+      <!-- Rule-Based Strategic Recommendations (3 actionable directives) -->
+      <div class="recommendations-container">
+        <h3 class="recommendations-heading">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          Executive Decision Directives
+        </h3>
+        <div class="recommendations-grid" id="recommendationsGrid">
+          <!-- Dynamic rule-based recommendation cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts Section (6 Analytical Visualizations) -->
+    <section class="charts-section" aria-labelledby="analyticsChartsTitle">
+      <div class="section-header-compact">
+        <div>
+          <h2 id="analyticsChartsTitle" class="section-title-sm">
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            Commercial Revenue &amp; Distribution Visualizations
+          </h2>
+          <p class="section-subtitle-sm">Dynamic multi-dimensional breakdowns rendered via Chart.js.</p>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <!-- Chart 1: Monthly Revenue Trend (Line) -->
+        <div class="chart-card chart-card-span-2">
+          <div class="chart-card-header">
+            <div>
+              <h3 class="chart-title">Monthly Revenue Performance Trend</h3>
+              <p class="chart-subtitle">Gross ticket sales volume across the 12-month reporting horizon ($ USD)</p>
+            </div>
+            <span class="chart-badge">Time-Series</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="revenueTrendChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Top Routes Revenue & Bookings (Bar) -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <h3 class="chart-title">Route Revenue Comparison</h3>
+              <p class="chart-subtitle">Gross revenue contribution per corridor</p>
+            </div>
+            <span class="chart-badge">Network</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="routesBarChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 3: Cabin Class Share (Doughnut) -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <h3 class="chart-title">Cabin Class Revenue Share</h3>
+              <p class="chart-subtitle">Distribution across Economy, Premium, Business &amp; First</p>
+            </div>
+            <span class="chart-badge">Product Mix</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="classDoughnutChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 4: Channel Distribution (Pie) -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <h3 class="chart-title">Sales Channel Breakdown</h3>
+              <p class="chart-subtitle">Direct Web, Mobile, GDS &amp; Corporate sales</p>
+            </div>
+            <span class="chart-badge">Acquisition</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="channelPieChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 5: Booking Status by Route (Stacked Bar) -->
+        <div class="chart-card chart-card-span-2">
+          <div class="chart-card-header">
+            <div>
+              <h3 class="chart-title">Booking Status Distribution by Corridor</h3>
+              <p class="chart-subtitle">Confirmed, Cancelled, and Pending tickets comparison</p>
+            </div>
+            <span class="chart-badge">Fulfillment</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="statusStackedChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 6: Revenue by Airline Division (Horizontal Bar) -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <h3 class="chart-title">Revenue by Operating Division</h3>
+              <p class="chart-subtitle">Mainline vs Regional Express vs Partner Link</p>
+            </div>
+            <span class="chart-badge">Fleet Ops</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="airlineBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Master Bookings Table Section -->
+    <section class="table-section" aria-labelledby="bookingsTableTitle">
+      <div class="table-card">
+        <!-- Table Toolbar -->
+        <div class="table-toolbar">
+          <div class="table-toolbar-left">
+            <h2 id="bookingsTableTitle" class="table-heading">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+              Passenger Booking Manifest
+            </h2>
+            <span class="table-record-tag" id="tableRecordCount">Loading...</span>
+          </div>
+
+          <div class="table-toolbar-right">
+            <!-- Search Input -->
+            <div class="search-input-wrap">
+              <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input type="search" id="tableSearchInput" class="table-search" placeholder="Search ID, route, class, channel..." aria-label="Search bookings table">
+            </div>
+
+            <!-- Rows Per Page -->
+            <div class="rows-select-wrap">
+              <label for="rowsPerPageSelect" class="sr-only">Rows per page</label>
+              <select id="rowsPerPageSelect" class="form-control form-control-sm" aria-label="Select rows per page">
+                <option value="10" selected>10 / page</option>
+                <option value="25">25 / page</option>
+                <option value="50">50 / page</option>
+              </select>
+            </div>
+
+            <!-- Export CSV Button -->
+            <button type="button" class="btn btn-gold btn-sm" id="exportCsvBtn" title="Export filtered manifest to CSV">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              <span>Export CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Responsive Table Container -->
+        <div class="table-responsive">
+          <table class="data-table" id="bookingsTable" aria-label="Flight Bookings Table">
+            <thead>
+              <tr>
+                <th scope="col" class="sortable-th" data-column="id">
+                  <div class="th-content">
+                    <span>Booking ID</span>
+                    <span class="sort-indicator" aria-hidden="true">⇅</span>
+                  </div>
+                </th>
+                <th scope="col" class="sortable-th" data-column="date">
+                  <div class="th-content">
+                    <span>Date</span>
+                    <span class="sort-indicator" aria-hidden="true">⇅</span>
+                  </div>
+                </th>
+                <th scope="col" class="sortable-th" data-column="route">
+                  <div class="th-content">
+                    <span>Corridor</span>
+                    <span class="sort-indicator" aria-hidden="true">⇅</span>
+                  </div>
+                </th>
+                <th scope="col" class="sortable-th" data-column="airline">
+                  <div class="th-content">
+                    <span>Operator</span>
+                    <span class="sort-indicator" aria-hidden="true">⇅</span>
+                  </div>
+                </th>
+                <th scope="col" class="sortable-th" data-column="class">
+                  <div class="th-content">
+                    <span>Cabin Class</span>
+                    <span class="sort-indicator" aria-hidden="true">⇅</span>
+                  </div>
+                </th>
+                <th scope="col" class="sortable-th text-center" data-column="passengerCount">
+                  <div class="th-content justify-center">
+                    <span>Pax</span>
+                    <span class="sort-indicator" aria-hidden="true">⇅</span>
+                  </div>
+                </th>
+                <th scope="col" class="sortable-th text-right" data-column="fare">
+                  <div class="th-content justify-end">
+                    <span>Fare (USD)</span>
+                    <span class="sort-indicator" aria-hidden="true">⇅</span>
+                  </div>
+                </th>
+                <th scope="col" class="sortable-th" data-column="channel">
+                  <div class="th-content">
+                    <span>Sales Channel</span>
+                    <span class="sort-indicator" aria-hidden="true">⇅</span>
+                  </div>
+                </th>
+                <th scope="col" class="sortable-th text-center" data-column="status">
+                  <div class="th-content justify-center">
+                    <span>Status</span>
+                    <span class="sort-indicator" aria-hidden="true">⇅</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTableBody">
+              <!-- Rendered dynamically by script.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Pagination Footer -->
+        <div class="table-pagination-footer">
+          <div class="pagination-info" id="paginationInfo">
+            Showing 0 to 0 of 0 entries
+          </div>
+          <div class="pagination-controls" id="paginationControls">
+            <!-- Dynamic page buttons -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Website Footer (4 Columns + Social + Copyright) -->
+  <footer class="main-footer" id="contact">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <!-- Col 1: About Lanka Wings -->
+        <div class="footer-col footer-col-brand">
+          <div class="footer-logo">
+            <svg class="footer-logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.3c.4-.2.6-.6.5-1.1z"/>
+            </svg>
+            <span class="footer-logo-text">LANKA <span class="gold-text">WINGS</span></span>
+          </div>
+          <p class="footer-about-text">
+            Sri Lanka's premier fictional international flag carrier, connecting Bandaranaike International Airport (CMB) with Europe, the Middle East, and Asia with legendary Island hospitality.
+          </p>
+          <div class="footer-iata-tags">
+            <span class="iata-pill">IATA: <strong>LW</strong></span>
+            <span class="iata-pill">ICAO: <strong>LKW</strong></span>
+            <span class="iata-pill">Callsign: <strong>SERENDIB</strong></span>
+          </div>
+        </div>
+
+        <!-- Col 2: Quick Links -->
+        <div class="footer-col">
+          <h3 class="footer-heading">Flight Services</h3>
+          <ul class="footer-links">
+            <li><a href="#book">Book Scheduled Flights</a></li>
+            <li><a href="#manage">Manage Booking &amp; Check-In</a></li>
+            <li><a href="#status">Live Flight Tracking</a></li>
+            <li><a href="#destinations">Route Map &amp; Global Hubs</a></li>
+            <li><a href="#cargo">Lanka Wings Cargo Logistics</a></li>
+            <li><a href="#charter">Executive Jet Charters</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Support & Policies -->
+        <div class="footer-col">
+          <h3 class="footer-heading">Customer Support</h3>
+          <ul class="footer-links">
+            <li><a href="#help">24/7 Global Passenger Desk</a></li>
+            <li><a href="#baggage">Baggage Allowances &amp; Claims</a></li>
+            <li><a href="#special">Special Assistance &amp; Dietary</a></li>
+            <li><a href="#advisories">International Travel Advisories</a></li>
+            <li><a href="#refund">Refund Policy &amp; Waivers</a></li>
+            <li><a href="#loyalty">SkySerendib Frequent Flyer</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Executive Headquarters & Contact -->
+        <div class="footer-col">
+          <h3 class="footer-heading">Executive Contact</h3>
+          <ul class="footer-contact-list">
+            <li>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>Lanka Wings Aviation Centre, Airport Road, Katunayake, Sri Lanka</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              <span>+94 11 234 5678 / +94 11 789 0123</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                <polyline points="22,6 12,13 2,6"/>
+              </svg>
+              <span>analytics@lankawings.lk</span>
+            </li>
+          </ul>
+
+          <div class="footer-social-strip">
+            <a href="#social-twitter" class="social-icon-btn" aria-label="X Twitter">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+            </a>
+            <a href="#social-facebook" class="social-icon-btn" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
+            </a>
+            <a href="#social-linkedin" class="social-icon-btn" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+              </svg>
+            </a>
+            <a href="#social-instagram" class="social-icon-btn" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright & Disclaimer Bar -->
+      <div class="footer-bottom-bar">
+        <p class="copyright-text">
+          &copy; 2026 Lanka Wings Airlines Ltd. All rights reserved. Fictional Sri Lankan carrier created for aviation demonstration and commercial decision analysis.
+        </p>
+        <div class="footer-legal-links">
+          <a href="#privacy">Privacy Policy</a>
+          <span>&bull;</span>
+          <a href="#terms">Conditions of Carriage</a>
+          <span>&bull;</span>
+          <a href="#security">Cybersecurity &amp; GDPR</a>
+          <span>&bull;</span>
+          <a href="#sitemap">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Notification Toast Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
